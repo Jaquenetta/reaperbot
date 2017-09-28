@@ -1,0 +1,12 @@
+{
+  "name": "reaper-bot",
+  "version": "1.0.0",
+  "description": "Our multitwitch link maker",
+  "main": "bot.js",
+  "author": "jaquenetta",
+  "dependencies": {
+    "discord.io": "^2.5.2",
+    "passport-twitch": "^1.0.3",
+    "winston": "^2.3.1"
+  }
+}
