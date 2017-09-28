@@ -92,6 +92,18 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     message: 'Pong!'
                 });
             break;
+            case 'offline':
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'http://www.officialdickvandyke.com/wp-content/uploads/2015/07/DvD-Studio-Still.jpg'
+                });
+            break;
+            case 'timber':
+                bot.sendMessage({
+                    to: channelID,
+                    message: "It's goin down... I'm yellin TIMBER! https://pbs.twimg.com/media/DJ0W6-fUQAACVPM.jpg"
+                });
+            break;
             case 'commands':
                 bot.sendMessage({
                     to: channelID,
