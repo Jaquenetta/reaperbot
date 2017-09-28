@@ -104,6 +104,23 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     message: "It's goin down... I'm yellin TIMBER! https://pbs.twimg.com/media/DJ0W6-fUQAACVPM.jpg"
                 });
             break;
+            case 'blizzcon':
+                var blizzCon = new Date('Fri, 03 Nov 2017 02:00:00 -0700');
+                var now = Date.now();
+                var diff = blizzCon - now;
+                if (diff > 0) {
+                    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    bot.sendMessage({
+                        to: channelID,
+                        message: days + ' days until BlizzCon!'
+                    });
+                } else {
+                    bot.sendMessage({
+                        to: channelID,
+                        message: 'Blizzcon has already passed!'
+                    })
+                }
+            break;
             case 'commands':
                 bot.sendMessage({
                     to: channelID,
@@ -154,7 +171,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             if(response.getBody().stream != null) {
                                 multi.push(response.getBody().stream.channel.name);
                             }
-                            console.log(multi);
                             if(j == total-1) {
                                 if(multi.length != 0) {
                                     bot.sendMessage({
