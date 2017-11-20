@@ -105,7 +105,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 });
             break;
             case 'blizzcon':
-                var blizzCon = new Date('Fri, 03 Nov 2017 02:00:00 -0700');
+                var blizzCon = new Date('Fri, 02 Nov 2018 02:00:00 -0700');
                 var now = Date.now();
                 var diff = blizzCon - now;
                 if (diff > 0) {
@@ -171,6 +171,41 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             if(response.getBody().stream != null) {
                                 multi.push(response.getBody().stream.channel.name);
                             }
+                            // if(j == total-1) {
+                            //     if(multi.length != 0) {
+                            //         bot.sendMessage({
+                            //             to: channelID,
+                            //             message: 'http://www.multitwitch.tv/' + multi.join("/")
+                            //         });
+                            //     }
+                            // } 
+                            j++;
+                        })
+                    }
+                })
+                requestify.request('https://api.twitch.tv/kraken/users/182517293/follows/channels?limit=100&sortby=last_broadcast', {
+                    method: 'GET',
+                    headers: {
+                        'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+                        'Accept': 'application/vnd.twitchtv.v5+json'
+                    }
+                })
+                .then(function(response) {
+                    // get the response body
+                    var total = response.getBody().follows.length;
+                    var j = 0;
+                    for(var i=0; i <= total; i++) {
+                        requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[i].channel._id, {
+                            method: 'GET',
+                            headers: {
+                                'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+                                'Accept': 'application/vnd.twitchtv.v5+json'
+                            }   
+                        })
+                        .then(function(response) {
+                            if(response.getBody().stream != null) {
+                                multi.push(response.getBody().stream.channel.name);
+                            }
                             if(j == total-1) {
                                 if(multi.length != 0) {
                                     bot.sendMessage({
@@ -183,6 +218,70 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         })
                     }
                 });
+            break;
+            // case 'communityonline':
+            //     var multi = [];
+            //     //Pull data on who is online on Team Reaper's follow list 
+            //     requestify.request('https://api.twitch.tv/helix/streams?community_id=4cc77efc-6633-4d88-b097-e6ea6f2726b2', {
+            //         method: 'GET',
+            //         headers: {
+            //             'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+            //             'Accept': 'application/vnd.twitchtv.v5+json'
+            //         }
+            //     })
+            //     .then(function(response) {
+            //         // get the response body
+            //         var total = response.getBody().follows.length;
+            //         var j = 0;
+            //         console.log(response.getBody());
+            //         for(var i=0; i <= total; i++) {
+            //             requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[i].channel._id, {
+            //                 method: 'GET',
+            //                 headers: {
+            //                     'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+            //                     'Accept': 'application/vnd.twitchtv.v5+json'
+            //                 }   
+            //             })
+            //             .then(function(response) {
+            //                 if(response.getBody().stream != null) {
+            //                     multi.push(response.getBody().stream.channel.name);
+            //                 }
+            //                 if(j == total-1) {
+            //                     if(multi.length != 0) {
+            //                         bot.sendMessage({
+            //                             to: channelID,
+            //                             message: 'http://www.multitwitch.tv/' + multi.join("/")
+            //                         });
+            //                     }
+            //                 } 
+            //                 j++;
+            //             })
+            //         }
+            //     });
+            // break;
+            case 'twitchid':
+                requestify.request('https://api.twitch.tv/kraken/users?login=reaper_bot__', {
+                            method: 'GET',
+                            headers: {
+                                'Client-ID': 'g4wjnzve4tye3zti9i6fs7fzwyp295',
+                                'Accept': 'application/vnd.twitchtv.v5+json'
+                            }  
+                        })
+                .then(function(response) {
+                    console.log(response.getBody());
+                })
+            break;
+            case 'communityid':
+                requestify.request('https://api.twitch.tv/kraken/communities?name=reaperstudios', {
+                            method: 'GET',
+                            headers: {
+                                'Client-ID': 'g4wjnzve4tye3zti9i6fs7fzwyp295',
+                                'Accept': 'application/vnd.twitchtv.v5+json'
+                            }  
+                        })
+                .then(function(response) {
+                    console.log(response.getBody());
+                })
             break;
          }
      }
