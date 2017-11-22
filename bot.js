@@ -11,7 +11,8 @@ var passport       = require("passport");
 var twitchStrategy = require("passport-twitch").Strategy;
 var requestify = require('requestify'); 
 var app = express();
-
+var multi = [];
+var accounts = [171135805, 182517293];
  
 app.set("views", "./views");
 // app.set("view engine", "ejs");
@@ -76,6 +77,52 @@ bot.on('ready', function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 
+// function multiTwitch(arr){
+//     for(var i = 0; i <= arr.length; i++) {
+//         requestify.request('https://api.twitch.tv/kraken/users/' + arr[i] + '/follows/channels?limit=100&sortby=last_broadcast', {
+//             method: 'GET',
+//             headers: {
+//                 'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+//                 'Accept': 'application/vnd.twitchtv.v5+json'
+//             }
+//         })
+//     .then(function(response){
+//         var total = response.getBody().follows.length;
+//         var j = 0;
+//         for(var k = 0; k <= total; k++){
+//             requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[k].channel._id, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+//                     'Accept': 'application/vnd.twitchtv.v5+json'
+//                 }   
+//         })
+//         .then(function(response) {
+//             if(response.getBody().stream != null) {
+//                 multi.push(response.getBody().stream.channel.name);
+//             }
+//             console.log(multi);
+//             if(j == total - 1) {
+//                 if(multi.length != 0) {
+//                     bot.sendMessage({
+//                         to: channelID,
+//                         message: 'http://www.multitwitch.tv/' + multi.join("/")
+//                     });
+//                 } else if (multi.length == 0) {
+//                     bot.sendMessage({
+//                         to: channelID,
+//                         message: 'No one is currently streaming!'
+//                     })
+//                 }
+//             } 
+//             j++;
+//         })
+
+//         }
+//     })
+// }
+// }
+
 
 bot.on('message', function (user, userID, channelID, message, evt) {
 
@@ -136,7 +183,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             case 'perks':
                 bot.sendMessage({
                     to: channelID,
-                    message: 'Perks of joining Team Reaper include being added to the Live Notifications, added to the multitwitch link, special team-only giveaways and team-only events.  Join today! Learn how with the command !TeamReaper'
+                    message: 'Perks of joining Team Reaper include being added to the multitwitch link, special team-only giveaways and team-only events.  Join today! Learn how with the command !TeamReaper'
                 });
             break;
             case 'store':
@@ -146,119 +193,50 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 });
             break;
             case 'online':
-                var multi = [];
-                //Pull data on who is online on Team Reaper's follow list 
-                requestify.request('https://api.twitch.tv/kraken/users/171135805/follows/channels?limit=100&sortby=last_broadcast', {
-                    method: 'GET',
-                    headers: {
-                        'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
-                        'Accept': 'application/vnd.twitchtv.v5+json'
-                    }
-                })
-                .then(function(response) {
-                    // get the response body
-                    var total = response.getBody().follows.length;
-                    var j = 0;
-                    for(var i=0; i <= total; i++) {
-                        requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[i].channel._id, {
+                    for(var i = 0; i < accounts.length; i++) {
+                        requestify.request('https://api.twitch.tv/kraken/users/' + accounts[i] + '/follows/channels?limit=100&sortby=last_broadcast', {
                             method: 'GET',
                             headers: {
                                 'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
                                 'Accept': 'application/vnd.twitchtv.v5+json'
-                            }   
+                            }
+                        })
+                    .then(function(response){
+                        var total = response.getBody().follows.length;
+                        var j = 0;
+                        for(var k = 0; k <= total; k++){
+                            requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[k].channel._id, {
+                                method: 'GET',
+                                headers: {
+                                    'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
+                                    'Accept': 'application/vnd.twitchtv.v5+json'
+                                }   
                         })
                         .then(function(response) {
                             if(response.getBody().stream != null) {
                                 multi.push(response.getBody().stream.channel.name);
                             }
-                            // if(j == total-1) {
-                            //     if(multi.length != 0) {
-                            //         bot.sendMessage({
-                            //             to: channelID,
-                            //             message: 'http://www.multitwitch.tv/' + multi.join("/")
-                            //         });
-                            //     }
-                            // } 
-                            j++;
-                        })
-                    }
-                })
-                requestify.request('https://api.twitch.tv/kraken/users/182517293/follows/channels?limit=100&sortby=last_broadcast', {
-                    method: 'GET',
-                    headers: {
-                        'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
-                        'Accept': 'application/vnd.twitchtv.v5+json'
-                    }
-                })
-                .then(function(response) {
-                    // get the response body
-                    var total = response.getBody().follows.length;
-                    var j = 0;
-                    for(var i=0; i <= total; i++) {
-                        requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[i].channel._id, {
-                            method: 'GET',
-                            headers: {
-                                'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
-                                'Accept': 'application/vnd.twitchtv.v5+json'
-                            }   
-                        })
-                        .then(function(response) {
-                            if(response.getBody().stream != null) {
-                                multi.push(response.getBody().stream.channel.name);
-                            }
-                            if(j == total-1) {
+                            console.log(multi);
+                            if(j == total - 1) {
                                 if(multi.length != 0) {
                                     bot.sendMessage({
                                         to: channelID,
                                         message: 'http://www.multitwitch.tv/' + multi.join("/")
                                     });
+                                } else if (multi.length == 0) {
+                                    bot.sendMessage({
+                                        to: channelID,
+                                        message: 'No one is currently streaming!'
+                                    })
                                 }
                             } 
                             j++;
                         })
-                    }
-                });
+                        }
+                    })
+                }
+                multi = [];
             break;
-            // case 'communityonline':
-            //     var multi = [];
-            //     //Pull data on who is online on Team Reaper's follow list 
-            //     requestify.request('https://api.twitch.tv/helix/streams?community_id=4cc77efc-6633-4d88-b097-e6ea6f2726b2', {
-            //         method: 'GET',
-            //         headers: {
-            //             'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
-            //             'Accept': 'application/vnd.twitchtv.v5+json'
-            //         }
-            //     })
-            //     .then(function(response) {
-            //         // get the response body
-            //         var total = response.getBody().follows.length;
-            //         var j = 0;
-            //         console.log(response.getBody());
-            //         for(var i=0; i <= total; i++) {
-            //             requestify.request('https://api.twitch.tv/kraken/streams/' + response.getBody().follows[i].channel._id, {
-            //                 method: 'GET',
-            //                 headers: {
-            //                     'Client-ID': '0460hs97f0gp9c685c0vgjt35qsila',
-            //                     'Accept': 'application/vnd.twitchtv.v5+json'
-            //                 }   
-            //             })
-            //             .then(function(response) {
-            //                 if(response.getBody().stream != null) {
-            //                     multi.push(response.getBody().stream.channel.name);
-            //                 }
-            //                 if(j == total-1) {
-            //                     if(multi.length != 0) {
-            //                         bot.sendMessage({
-            //                             to: channelID,
-            //                             message: 'http://www.multitwitch.tv/' + multi.join("/")
-            //                         });
-            //                     }
-            //                 } 
-            //                 j++;
-            //             })
-            //         }
-            //     });
-            // break;
             case 'twitchid':
                 requestify.request('https://api.twitch.tv/kraken/users?login=reaper_bot__', {
                             method: 'GET',
